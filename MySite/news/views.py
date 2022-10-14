@@ -2,9 +2,19 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.views.generic import ListView, DetailView, CreateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.forms import UserCreationForm
 from .models import News, Category
 from .forms import NewsForm
 from .utils import MyMixin
+
+
+def register(request):
+    form = UserCreationForm()
+    return render(request, 'news/register.html', context={'form': form})
+
+
+def login(request):
+    return render(request, 'news/login.html')
 
 
 class HomeNews(MyMixin, ListView):
@@ -27,6 +37,7 @@ class HomeNews(MyMixin, ListView):
 
 
 class NewsByCategory(MyMixin, ListView):
+    paginate_by = 2
     model = News
     template_name = 'news/home_news_list.html'
     context_object_name = 'news'
@@ -55,6 +66,12 @@ class CreateNews(LoginRequiredMixin, CreateView):
     login_url = '/admin/'
 
 
+class Regiser(CreateView):
+    form_class = UserCreationForm
+    success_url = reverse_lazy('login')
+    template_name = 'news/register.html'
+
+
 # def index(request):
 #     news = News.objects.order_by('-created_at')
 #     context = {'news': news,
@@ -75,14 +92,14 @@ class CreateNews(LoginRequiredMixin, CreateView):
 #     return render(request, 'news/view_news.html', {'news_item': news_item})
 
 
-def add_news(request):
-    if request.method == 'POST':
-        form = NewsForm(request.POST)
-        if form.is_valid():
-            # print(form.cleaned_data)
-            # news = News.objects.create(**form.cleaned_data)
-            news = form.save()
-            return redirect(news)
-    else:
-        form = NewsForm()
-    return render(request, 'news/add_news.html', {'form': form})
+# def add_news(request):
+#     if request.method == 'POST':
+#         form = NewsForm(request.POST)
+#         if form.is_valid():
+#             # print(form.cleaned_data)
+#             # news = News.objects.create(**form.cleaned_data)
+#             news = form.save()
+#             return redirect(news)
+#     else:
+#         form = NewsForm()
+#     return render(request, 'news/add_news.html', {'form': form})
