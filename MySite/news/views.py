@@ -3,6 +3,7 @@ from django.views.generic import ListView, DetailView, CreateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
 from .models import News, Category
 from .forms import NewsForm
 from .utils import MyMixin
@@ -70,7 +71,6 @@ class Regiser(CreateView):
     form_class = UserCreationForm
     success_url = reverse_lazy('login')
     template_name = 'news/register.html'
-
 
 # def index(request):
 #     news = News.objects.order_by('-created_at')
