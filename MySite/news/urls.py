@@ -2,8 +2,9 @@ from django.urls import path, include
 from .views import *
 
 urlpatterns = [
-    path('register/', Regiser.as_view(), name='register'),
-    path('', include('django.contrib.auth.urls')),
+    path('register/', Register.as_view(), name='register'),
+    path('login/', Login.as_view(), name='login'),
+    path('logout/', Logout.as_view(), name='logout'),
     path('', HomeNews.as_view(), name='home'),
     path('category/<int:category_id>/', NewsByCategory.as_view(), name='category'),
     path('news/<int:pk>/', ViewNews.as_view(), name='view_news'),

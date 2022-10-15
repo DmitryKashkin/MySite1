@@ -1,21 +1,13 @@
-from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth import login, logout, authenticate
+from django.http import HttpResponseRedirect
+from django.shortcuts import redirect
 from django.views.generic import ListView, DetailView, CreateView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib import messages
 from .models import News, Category
-from .forms import NewsForm
+from .forms import NewsForm, UserRegisterForm, UserLoginForm
 from .utils import MyMixin
-
-
-def register(request):
-    form = UserCreationForm()
-    return render(request, 'news/register.html', context={'form': form})
-
-
-def login(request):
-    return render(request, 'news/login.html')
 
 
 class HomeNews(MyMixin, ListView):
@@ -67,10 +59,25 @@ class CreateNews(LoginRequiredMixin, CreateView):
     login_url = '/admin/'
 
 
-class Regiser(CreateView):
-    form_class = UserCreationForm
+class Register(CreateView):
+    form_class = UserRegisterForm
     success_url = reverse_lazy('login')
     template_name = 'news/register.html'
+
+    def form_valid(self, form):
+        # save the new user first
+        user = form.save()
+        login(self.request, user)
+        return redirect('home')
+
+
+class Login(LoginView):
+    form_class = UserLoginForm
+    template_name = 'registration/login.html'
+
+
+class Logout(LogoutView):
+    pass
 
 # def index(request):
 #     news = News.objects.order_by('-created_at')
