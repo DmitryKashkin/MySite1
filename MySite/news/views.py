@@ -2,12 +2,24 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth import login, logout, authenticate
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
-from django.views.generic import ListView, DetailView, CreateView
+from django.views.generic import ListView, DetailView, CreateView, FormView
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.mail import send_mail, EmailMessage
 from .models import News, Category
-from .forms import NewsForm, UserRegisterForm, UserLoginForm
+from .forms import NewsForm, UserRegisterForm, UserLoginForm, ContactForm
 from .utils import MyMixin
+
+
+class SendMail(FormView):
+    form_class = ContactForm
+    template_name = 'news/send_mail.html'
+    success_url = reverse_lazy('send_mail')
+
+    def form_valid(self, form):
+        form.send(self.request)
+        return super().form_valid(form)
+
 
 
 class HomeNews(MyMixin, ListView):

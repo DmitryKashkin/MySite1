@@ -1,9 +1,38 @@
 from django import forms
+from django.conf import settings
+from django.contrib import messages
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 import re
+
+from django.core.mail import send_mail
+
 from .models import News
+
+
+class ContactForm(forms.Form):
+    recipient = forms.EmailField(label='Кому:', widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    subject = forms.CharField(
+        label='Тема:',
+        help_text='Не более 150 символов',
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    message = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control'}),
+        label='Сообщение',
+    )
+
+    def send(self, request):
+        mail = send_mail(
+            subject=self.cleaned_data['subject'],
+            message=self.cleaned_data['message'],
+            from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[self.cleaned_data['recipient'], ],
+            fail_silently=True,
+        )
+        if mail:
+            messages.success(request, 'Письмо отправлено')
 
 
 class UserRegisterForm(UserCreationForm):
