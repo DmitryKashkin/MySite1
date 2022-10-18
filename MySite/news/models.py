@@ -4,6 +4,9 @@ from django.urls import reverse
 
 class News(models.Model):
     title = models.CharField(max_length=150, verbose_name='Наименование')
+    slug = models.SlugField(max_length=150, verbose_name='URL', default=True)
+    # slug = models.SlugField(max_length=150, unique=True,
+    #                         db_index=True, verbose_name='URL')
     content = models.TextField(blank=True, verbose_name='Содержание')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата публикации')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Дата обновления')
@@ -18,7 +21,8 @@ class News(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('view_news', kwargs={'pk': self.pk})
+        return reverse('view_news', kwargs={'slug': self.slug})
+        # return reverse('view_news', kwargs={'pk': self.pk})
 
     class Meta:
         verbose_name = 'Новость'
@@ -27,7 +31,12 @@ class News(models.Model):
 
 
 class Category(models.Model):
-    title = models.CharField(max_length=150, db_index=True, verbose_name='Наименование категории')
+    title = models.CharField(
+        max_length=150, db_index=True, verbose_name='Наименование категории')
+    slug = models.SlugField(max_length=150, verbose_name='URL', default=True)
+
+    # slug = models.SlugField(max_length=150, unique=True,
+    #                         db_index=True, verbose_name='URL')
 
     def get_absolute_url(self):
         return reverse('category', kwargs={'category_id': self.pk})

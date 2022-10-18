@@ -220,6 +220,6 @@ CKEDITOR_CONFIGS = {
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-        'LOCATION': 'c:/temp/django_cache',
+        'LOCATION': os.path.join(BASE_DIR, 'django_cache'),
     }
 }
