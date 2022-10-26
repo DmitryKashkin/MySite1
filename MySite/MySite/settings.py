@@ -41,6 +41,8 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     'captcha',
     'debug_toolbar',
+    'testapp.apps.TestappConfig',
+    'mptt',
 ]
 
 MIDDLEWARE = [
